@@ -73,7 +73,16 @@ function(app,Spinner) {
         self.insertView(view);
       });
     },
+    checkWindow: function(){
+      if ($(window).width() < 768){
+        $('.button-title').hide();
+      } else {
+        $('.button-title').show();
+      }
+    },
     afterRender: function(){
+      this.checkWindow();
+      $(window).on('resize', this.checkWindow);
       $('.add-toolbar').show();
     }
   });

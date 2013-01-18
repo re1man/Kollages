@@ -39,7 +39,7 @@ app.post('/getSplash', function(req, res){
             secs = JSON.parse(sections);
             res.send(secs);
         } else {
-           res.send(200); 
+           res.send(200);
         }
     });
 });

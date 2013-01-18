@@ -31,4 +31,11 @@ body{
 .remove-section{
 	position: absolute;
 	right: 15px;
+	top: 50px;
+}
+.button-list{
+	margin-left:5px;
+}
+.post-sec{
+	position: relative;
 }
