@@ -24,7 +24,7 @@ require.config({
     'backbone-touch':'../assets/js/plugins/backbone.touch',
     "highlight": '../assets/js/plugins/jquery.highlight',
     'jquery.touch-punch' :     '../assets/js/plugins/jquery.ui.touch-punch',
-    'jquery.ui' :     '../assets/js/libs/jquery-ui-1.9.2.custom',
+    'jquery.ui' :     '../assets/js/libs/jquery-ui-1.10.0.custom',
     "idle": '../assets/js/plugins/jquery.idle',
     'jquery.iframe-transport' :  '../assets/js/plugins/jquery.iframe-transport',
     'jquery.fileupload' :        '../assets/js/plugins/jquery.fileupload'
@@ -45,8 +45,11 @@ require.config({
       exports: "Bootstrap"
     },
     'jquery.ui': {
-      deps: ['jquery.touch-punch'],
+      deps: ['jquery'],
       exports: "Jquery-UI"
+    },
+    'jquery.touch-punch': {
+      deps: ['jquery.ui']
     },
     'jquery.fileupload': {
       deps: ['jquery.ui']

@@ -8,10 +8,29 @@ html{
 	 -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 body{
+	font-size:100%;
 	background-color:#f5f5f5 !important;
 }
 .post-init, .post-section, .post-loading, .posting, .facebook-login, .posting-container,.post-sec{
 	height:100%;
+}
+.title-list{
+	height: 87%;
+	width: 90%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+.title-list li{
+	height:25%;
+	list-style-type: none;
+	padding:3%;
+	cursor:pointer;
+}
+.title-list li div {
+	font-size:4em;
+	line-height: 1em;
+	outline: none;
 }
 .post-section, .post-loading,.add-toolbar{
 	display: none;
@@ -38,4 +57,34 @@ body{
 }
 .post-sec{
 	position: relative;
+}
+.add-bg{
+	position: relative;
+	top: 46%;
+	left: 46%;
+}
+.char-amount{
+	position: absolute;
+	top: 40%;
+	left: 40%;
+	font-size:2.5em;
+}
+.move-title{
+	cursor:move;
+}
+.borderize{
+	background: teal;
+	background: rgba(0,128,128,0.2);
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
+}
+.leftAlign{
+	text-align: left;
+}
+.centerAlign{
+	text-align: center;
+}
+.rightAlign{
+	text-align: right;
 }
