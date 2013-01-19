@@ -22,20 +22,28 @@ function(app,Spinner) {
     events: {
       'click .remove-section': 'removeSection',
       'click .add-title': 'addTitle',
-      'focus .title': 'hideBG',
-      'blur .title': 'showBG'
+      'click .add-para': 'addPara',
+      'focus .title, .para': 'hideBG',
+      'click .move-title': 'keepHidden',
+      'blur .title,.para': 'showBG'
     },
     removeSection: function(){
       this.model.collection.remove(this.model);
       return false;
     },
     showBG: function(e){
-      $('.add-bg').show();
-      $('.remove-section').show();
-      $('.char-amount').hide();
+      Feed.showTO = window.setTimeout(function(){
+        $('.add-bg').show();
+        $('.remove-section').show();
+        $('.char-amount').hide();
+        $('.edit-button').hide();
+      },200);
     },
     vanish: function(){
       $('.button-list').hide();
+    },
+    keepHidden: function(){
+      return false;
     },
     hideBG: function(e){
       $('.add-bg').hide();
@@ -48,10 +56,56 @@ function(app,Spinner) {
       view.render();
       this.vanish();
       return false;
+    },
+    addPara: function(){
+      var view = new Feed.Para();
+      this.insertView(view);
+      view.render();
+      this.vanish();
+      return false;
     }
   });
   // Default collection.
   Feed.Collection = Backbone.Collection.extend();
+
+  Feed.Para = Backbone.View.extend({
+    tagName: 'div',
+    className: 'para-section',
+    template: 'app/templates/layouts/para',
+    initialize: function(){
+      this.max = 1400;
+      this.placeHolder = 'Paragraph';
+    },
+    events: {
+      'keydown .para': 'checkChar',
+      'click .para': 'checkChar',
+      'click .edit-button': 'makeEdit',
+      'blur .para': 'save'
+    },
+    checkChar: function(e){
+      if ($(e.currentTarget).text().trim() === this.placeHolder) {
+        $(e.currentTarget).text('');
+      }
+      this.contentEditable = $(e.currentTarget);
+      if(e.which != 8 && this.contentEditable.text().length >= this.max)
+        {
+            e.preventDefault();
+        }
+    },
+    makeEdit: function(e){
+      var cmd = $(e.currentTarget).attr('data-class');
+      document.execCommand (cmd, true, null);
+      window.clearTimeout(Feed.showTO);
+      e.stopPropagation();
+      e.preventDefault();
+    },
+    save: function(e){
+      if ($(e.currentTarget).text().trim().length === 0) {
+        $(e.currentTarget).text(this.placeHolder);
+      }
+    }
+  });
+
   Feed.Title = Backbone.View.extend({
     tagName: 'ul',
     className: 'title-list',
@@ -63,11 +117,11 @@ function(app,Spinner) {
     events: {
       'keydown .title': 'checkChar',
       'click .title': 'checkChar',
-      'click .move-title, .m-btn': 'falsify',
       'blur .title': 'save',
       'click .edit-button': 'editor'
     },
     checkChar: function(e){
+      $('.edit-button').show();
       if ($(e.currentTarget).text().trim() === this.placeHolder) {
         $(e.currentTarget).text('');
       }
@@ -81,8 +135,12 @@ function(app,Spinner) {
     editor: function(e){
       var cls = $(e.currentTarget).attr('data-class');
       this.$('.title').attr('class', 'title').addClass(cls);
+      window.clearTimeout(Feed.showTO);
+      e.stopPropagation();
+      e.preventDefault();
     },
     afterRender: function(){
+      $('.edit-button').hide();
       $(this.el).sortable({
         handle: '.move-title',
         start: function(){
@@ -98,9 +156,6 @@ function(app,Spinner) {
           $('.title-filler').removeClass('borderize');
         }
       });
-    },
-    falsify: function(){
-      return false;
     },
     save: function(e){
       if ($(e.currentTarget).text().trim().length === 0) {

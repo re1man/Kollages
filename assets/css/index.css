@@ -32,6 +32,15 @@ body{
 	line-height: 1em;
 	outline: none;
 }
+.para{
+	font-size:20px;
+	line-height: 1.45em;
+	outline: none;
+	text-indent: 2em;
+	padding:10px;
+	max-width: 1000px;
+	margin: auto;
+}
 .post-section, .post-loading,.add-toolbar{
 	display: none;
 }
@@ -64,9 +73,6 @@ body{
 	left: 46%;
 }
 .char-amount{
-	position: absolute;
-	top: 40%;
-	left: 40%;
 	font-size:2.5em;
 }
 .move-title{
@@ -87,4 +93,7 @@ body{
 }
 .rightAlign{
 	text-align: right;
+}
+.text-edit-buttons{
+	text-align: center;
 }
