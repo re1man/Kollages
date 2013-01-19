@@ -13,7 +13,8 @@ function(app,Spinner) {
 
   // Create a new module.
   var Feed = app.module();
-
+  Feed.Sections = [];
+  Feed.SectionViews = [];
   // Default model.
   Feed.Model = Backbone.Model.extend();
   Feed.Section = Backbone.View.extend({
@@ -25,10 +26,16 @@ function(app,Spinner) {
       'click .add-para': 'addPara',
       'focus .title, .para': 'hideBG',
       'click .move-title': 'keepHidden',
-      'blur .title,.para': 'showBG'
+      'blur .title,.para': 'showBG',
+      'click .remove-section-type': 'removeSectionType'
     },
     removeSection: function(){
       this.model.collection.remove(this.model);
+      return false;
+    },
+    removeSectionType: function(){
+      Feed.SectionViews[this.options.index].remove();
+      this.render();
       return false;
     },
     showBG: function(e){
@@ -51,14 +58,14 @@ function(app,Spinner) {
       $('.char-amount').show();
     },
     addTitle: function(){
-      var view = new Feed.Title();
+      var view = new Feed.Title({model:this.model, index: this.options.index});
       this.insertView(view);
       view.render();
       this.vanish();
       return false;
     },
     addPara: function(){
-      var view = new Feed.Para();
+      var view = new Feed.Para({model:this.model, index: this.options.index});
       this.insertView(view);
       view.render();
       this.vanish();
@@ -75,6 +82,7 @@ function(app,Spinner) {
     initialize: function(){
       this.max = 1400;
       this.placeHolder = 'Paragraph';
+      Feed.SectionViews[this.options.index] = this;
     },
     events: {
       'keydown .para': 'checkChar',
@@ -83,6 +91,7 @@ function(app,Spinner) {
       'blur .para': 'save'
     },
     checkChar: function(e){
+      $('.edit-button').show();
       if ($(e.currentTarget).text().trim() === this.placeHolder) {
         $(e.currentTarget).text('');
       }
@@ -103,6 +112,9 @@ function(app,Spinner) {
       if ($(e.currentTarget).text().trim().length === 0) {
         $(e.currentTarget).text(this.placeHolder);
       }
+    },
+    afterRender: function(){
+      $('.edit-button').hide();
     }
   });
 
@@ -113,6 +125,7 @@ function(app,Spinner) {
     initialize: function(){
       this.max = 50;
       this.placeHolder = 'Title. Drag and align.';
+      Feed.SectionViews[this.options.index] = this;
     },
     events: {
       'keydown .title': 'checkChar',
@@ -190,6 +203,7 @@ function(app,Spinner) {
       });
       $.post('/save', {collection:collection}, function(data){
         self.render();
+        $('html,body').scrollTop($(document).height());
       });
     },
     beforeRender: function(){
@@ -202,9 +216,9 @@ function(app,Spinner) {
       //   height = len * 100;
       // }
       // $(this.el).css('height', height + '%');
-      this.collection.each(function(model){
-        var view = new Feed.Section({model:model});
-        self.insertView(view);
+      this.collection.each(function(model,index){
+        Feed.Sections[index] = new Feed.Section({model:model, index:index});
+        self.insertView(Feed.Sections[index]);
       });
     },
     checkWindow: function(){
