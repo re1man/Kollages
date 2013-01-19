@@ -208,19 +208,14 @@ function(app,Spinner) {
       e.preventDefault();
     },
     afterRender: function(){
+      var self = this;
       $('.edit-button').hide();
       $(this.el).sortable({
         handle: '.move-title',
         start: function(){
-          $('.add-bg').hide();
-          $('.remove-section').hide();
-          $('.edit-button').hide();
           $('.title-filler').addClass('borderize');
         },
         stop: function(){
-          $('.add-bg').show();
-          $('.remove-section').show();
-          $('.edit-button').show();
           $('.title-filler').removeClass('borderize');
         }
       });
