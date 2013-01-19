@@ -86,12 +86,13 @@ function(app,Spinner) {
     },
     events: {
       'keydown .para': 'checkChar',
-      'click .para': 'checkChar',
+      'click .para': 'cancel',
       'click .edit-button': 'makeEdit',
-      'blur .para': 'save'
+      'blur .para': 'save',
+      'click .cancel-link': 'cancel',
+      'click .submit-link': 'submitLink'
     },
     checkChar: function(e){
-      $('.edit-button').show();
       if ($(e.currentTarget).text().trim() === this.placeHolder) {
         $(e.currentTarget).text('');
       }
@@ -103,7 +104,23 @@ function(app,Spinner) {
     },
     makeEdit: function(e){
       var cmd = $(e.currentTarget).attr('data-class');
-      document.execCommand (cmd, true, null);
+      if (cmd === 'CreateLink') {
+        this.savedSel = saveSelection();
+        var spn = '<span class="selected">' + this.savedSel + '</span>';
+        this.$('.para').html(this.$('.para').html().replace(this.savedSel, spn));
+        if ($('.selected').parent().prop("tagName") === 'A'){
+          var cnt = $('.selected').parent().contents();
+          $('.selected').parent().replaceWith(cnt);
+          var cn = $(".selected").contents();
+          $(".selected").replaceWith(cn);
+        } else {
+          $('.input-link').show();
+          $('.remove-section-type').hide();
+          $('.edit-button').hide();
+        }
+      } else {
+        document.execCommand (cmd, false, null);
+      }
       window.clearTimeout(Feed.showTO);
       e.stopPropagation();
       e.preventDefault();
@@ -112,6 +129,20 @@ function(app,Spinner) {
       if ($(e.currentTarget).text().trim().length === 0) {
         $(e.currentTarget).text(this.placeHolder);
       }
+    },
+    submitLink: function(){
+      $('.selected').wrap('<a href='+$('.link-input').val().trim()+' target="_blank"></a>');
+      this.cancel();
+      return false;
+    },
+    cancel: function(e){
+      $('.input-link').hide();
+      $('.remove-section-type').show();
+      $('.edit-button').show();
+      var cnt = $(".selected").contents();
+      $(".selected").replaceWith(cnt);
+      if (e) this.checkChar(e);
+      return false;
     },
     afterRender: function(){
       $('.edit-button').hide();
@@ -129,12 +160,13 @@ function(app,Spinner) {
     },
     events: {
       'keydown .title': 'checkChar',
-      'click .title': 'checkChar',
+      'click .title': 'cancel',
       'blur .title': 'save',
-      'click .edit-button': 'editor'
+      'click .edit-button': 'editor',
+      'click .cancel-link': 'cancel',
+      'click .submit-link': 'submitLink'
     },
     checkChar: function(e){
-      $('.edit-button').show();
       if ($(e.currentTarget).text().trim() === this.placeHolder) {
         $(e.currentTarget).text('');
       }
@@ -145,9 +177,33 @@ function(app,Spinner) {
             e.preventDefault();
         }
     },
+    cancel: function(e){
+      $('.input-link').hide();
+      $('.remove-section-type').show();
+      $('.edit-button').show();
+      if (e) this.checkChar(e);
+      return false;
+    },
+    submitLink: function(){
+      var text = this.$('.title').text();
+      $('.title').html('<a class="title-link" href='+$('.link-input').val().trim()+' target="_blank">'+text+'</a>');
+      this.cancel();
+      return false;
+    },
     editor: function(e){
       var cls = $(e.currentTarget).attr('data-class');
-      this.$('.title').attr('class', 'title').addClass(cls);
+      if (cls === 'makeLink'){
+        if (this.$('.title').children().hasClass('title-link')){
+          var cnt = $(".title-link").contents();
+          $(".title-link").replaceWith(cnt);
+        } else {
+          $('.input-link').show();
+          $('.remove-section-type').hide();
+          $('.edit-button').hide();
+        }
+      } else {
+         this.$('.title').attr('class', 'title').addClass(cls);
+      }
       window.clearTimeout(Feed.showTO);
       e.stopPropagation();
       e.preventDefault();
@@ -289,6 +345,37 @@ function(app,Spinner) {
       
     }
   });
+
+
+  function saveSelection() {
+      if (window.getSelection) {
+          sel = window.getSelection();
+          if (sel.getRangeAt && sel.rangeCount) {
+              var ranges = [];
+              for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+                  ranges.push(sel.getRangeAt(i));
+              }
+              return ranges;
+          }
+      } else if (document.selection && document.selection.createRange) {
+          return document.selection.createRange();
+      }
+      return null;
+  }
+
+  function restoreSelection(savedSel) {
+      if (savedSel) {
+          if (window.getSelection) {
+              sel = window.getSelection();
+              sel.removeAllRanges();
+              for (var i = 0, len = savedSel.length; i < len; ++i) {
+                  sel.addRange(savedSel[i]);
+              }
+          } else if (document.selection && savedSel.select) {
+              savedSel.select();
+          }
+      }
+  }
   // Return the module for AMD compliance.
   return Feed;
 

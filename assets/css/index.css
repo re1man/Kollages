@@ -97,3 +97,10 @@ body{
 .text-edit-buttons{
 	text-align: center;
 }
+.input-link{
+	display: none;
+}
+.selected{
+	background: #FE57A1;
+	color:white;
+}
