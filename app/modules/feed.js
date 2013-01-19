@@ -185,15 +185,14 @@ function(app,Spinner) {
       return false;
     },
     submitLink: function(){
-      var text = this.$('.title').text();
-      $('.title').html('<a class="title-link" href='+$('.link-input').val().trim()+' target="_blank">'+text+'</a>');
+      $('.title').wrap('<a class="title-link" href='+$('.link-input').val().trim()+' target="_blank"></a>');
       this.cancel();
       return false;
     },
     editor: function(e){
       var cls = $(e.currentTarget).attr('data-class');
       if (cls === 'makeLink'){
-        if (this.$('.title').children().hasClass('title-link')){
+        if (this.$('.title').parent().hasClass('title-link')){
           var cnt = $(".title-link").contents();
           $(".title-link").replaceWith(cnt);
         } else {
@@ -243,7 +242,16 @@ function(app,Spinner) {
       'click .add-section': 'addSection'
     },
     addSection: function(){
-      var model = new Feed.Model({para:false, image:false,title:false, link:false, video:false, inputs: [], textAlign: false, vertIndex: false});
+      var model = new Feed.Model({
+        para:false,
+        image:false,
+        title:false,
+        link:false,
+        video:false,
+        type: false, // 1 = title, 2 = paragraph, 3 = image, 4 = video
+        textAlign: false,
+        vertIndex: false
+      });
       this.collection.add(model);
       return false;
     },
