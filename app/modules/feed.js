@@ -226,6 +226,17 @@ function(app,Spinner) {
       }
     }
   });
+
+
+  Feed.Video = Backbone.View.extend({
+    className: 'video-container',
+    template: 'app/templates/layouts/video',
+    serialize: function(){
+      var m = this.model.toJSON();
+      return m;
+    }
+  });
+
   Feed.Posting = Backbone.View.extend({
     className: 'posting-container',
     template: 'app/templates/layouts/posting',
@@ -238,14 +249,17 @@ function(app,Spinner) {
     },
     addSection: function(){
       var model = new Feed.Model({
-        para:false,
-        image:false,
-        title:false,
-        link:false,
-        video:false,
+        para:false,//2
+        image:false, //1, 3
+        title:false,//1
+        link:false, //1
+        video:false, //4
         type: false, // 1 = title, 2 = paragraph, 3 = image, 4 = video
-        textAlign: false,
-        vertIndex: false
+        textAlign: false, //1
+        vertIndex: false, //1
+        color: false, //1
+        titleFont: false, //1
+        paraFont: false //2
       });
       this.collection.add(model);
       return false;
@@ -283,6 +297,7 @@ function(app,Spinner) {
     checkWindow: function(){
       var win = ($(window).width()/screen.availWidth) * 100;
       $('body').css('font-size', win + '%');
+      $('.para,.title').blur();
       if ($(window).width() < 768){
         $('.button-title').hide();
       } else {
