@@ -11,8 +11,13 @@ body{
 	font-size:100%;
 	background-color:#f5f5f5 !important;
 }
-.post-init, .post-section, .post-loading, .posting, .facebook-login, .posting-container,.post-sec{
+.post-init, .post-section, .post-loading, .posting, .facebook-login, .posting-container,.post-sec, .video-container,
+.video-container table{
 	height:100%;
+}
+.video-container{
+	width: 50%;
+	margin:auto;
 }
 .title-list{
 	height: 87%;
@@ -103,4 +108,12 @@ body{
 .selected{
 	background: #FE57A1;
 	color:white;
+}
+.video-inputs{
+	position: relative;
+	text-align: center;
+	padding-top: 20%;
+}
+.video-container{
+	text-align: center;
 }

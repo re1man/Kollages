@@ -24,6 +24,7 @@ function(app,Spinner) {
       'click .remove-section': 'removeSection',
       'click .add-title': 'addTitle',
       'click .add-para': 'addPara',
+      'click .add-vid': 'addVideo',
       'focus .title, .para': 'hideBG',
       'click .move-title': 'keepHidden',
       'blur .title,.para': 'showBG',
@@ -66,6 +67,13 @@ function(app,Spinner) {
     },
     addPara: function(){
       var view = new Feed.Para({model:this.model, index: this.options.index});
+      this.insertView(view);
+      view.render();
+      this.vanish();
+      return false;
+    },
+    addVideo: function(){
+      var view = new Feed.Video({model:this.model, index: this.options.index});
       this.insertView(view);
       view.render();
       this.vanish();
@@ -231,9 +239,38 @@ function(app,Spinner) {
   Feed.Video = Backbone.View.extend({
     className: 'video-container',
     template: 'app/templates/layouts/video',
+    initialize: function(){
+      this.model.on('change', this.render,this);
+      Feed.SectionViews[this.options.index] = this;
+    },
     serialize: function(){
       var m = this.model.toJSON();
+      var video = m.video;
+      if (video !== "" && video.match(/.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/)){
+          youtubeID = video.match(/.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/)[1];
+          m.youtube = youtubeID;
+      } else if (video !== "" && video.match(/vimeo.com\/(\d+)($|\/)/)) {
+          vimeoId = video.match(/vimeo.com\/(\d+)($|\/)/)[1];
+          m.vimeo = vimeoId;
+      }
       return m;
+    },
+    events: {
+      'click .submit-video': 'add'
+    },
+    add: function(){
+      var video = $('.video-input').val().trim();
+      if (video !== "" && video.match(/.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/)){
+          this.model.set('video', video);
+      } else if (video !== "" && video.match(/vimeo.com\/(\d+)($|\/)/)) {
+          this.model.set('video', video);
+      } else {
+        $('.video-input').val('');
+        return false;
+      }
+    },
+    afterRender: function(){
+      resizeVideo();
     }
   });
 
@@ -249,17 +286,17 @@ function(app,Spinner) {
     },
     addSection: function(){
       var model = new Feed.Model({
-        para:false,//2
-        image:false, //1, 3
-        title:false,//1
-        link:false, //1
-        video:false, //4
-        type: false, // 1 = title, 2 = paragraph, 3 = image, 4 = video
-        textAlign: false, //1
-        vertIndex: false, //1
-        color: false, //1
-        titleFont: false, //1
-        paraFont: false //2
+        para:null,//2
+        image:null, //1, 3
+        title:null,//1
+        link:null, //1
+        video:null, //4
+        type: null, // 1 = title, 2 = paragraph, 3 = image, 4 = video
+        textAlign: null, //1
+        vertIndex: null, //1
+        color: null, //1
+        titleFont: null, //1
+        paraFont: null //2
       });
       this.collection.add(model);
       return false;
@@ -298,6 +335,7 @@ function(app,Spinner) {
       var win = ($(window).width()/screen.availWidth) * 100;
       $('body').css('font-size', win + '%');
       $('.para,.title').blur();
+      resizeVideo();
       if ($(window).width() < 768){
         $('.button-title').hide();
       } else {
@@ -393,6 +431,25 @@ function(app,Spinner) {
               savedSel.select();
           }
       }
+  }
+
+  function resizeVideo(){
+    var $allVideos = $(".video-holder").find('iframe'),
+    $fluidEl = $(".video-container");
+    $allVideos.each(function() {
+
+    $(this).removeAttr('height').removeAttr('width');
+    var newWidth = $fluidEl.width();
+    var aspectRatio = $fluidEl.height() / $fluidEl.width();
+    // Resize all videos according to their own aspect ratio
+    $allVideos.each(function() {
+      var $el = $(this);
+      $el
+        .width(newWidth)
+        .height(newWidth * aspectRatio/2);
+
+    });
+  });
   }
   // Return the module for AMD compliance.
   return Feed;

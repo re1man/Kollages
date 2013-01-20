@@ -1,6 +1,33 @@
 {{#if video}}
 
+{{#if youtube}}
+<table class="video-holder" style="margin:auto;">
+  <tr>
+     <td style="text-align: center; vertical-align: middle;">
+          <iframe class="youtube-player"  src="http://www.youtube.com/embed/{{youtube}}" frameborder="0" allowfullscreen></iframe>
+     </td>
+  </tr>
+</table>
+
+{{/if}}
+
+{{#if vimeo}}
+<table  class="video-holder" style="width: 100%;">
+  <tr>
+     <td style="text-align: center; vertical-align: middle;">
+          <iframe src="http://player.vimeo.com/video/{{vimeo}}" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+     </td>
+  </tr>
+</table>
+
+{{/if}}
+
 {{else}}
-
-
+<a href="#" class="m-btn icn-only red remove-section-type"><i class="icon-remove icon-white"></i></a>
+<div class="video-inputs control-group">
+	<label class="control-label">YouTube/Vimeo</label>
+	<input type="text" class="video-input">
+	<br>
+	<a href="#" data-bypass="true" class="submit-video m-btn blue">Submit</a>
+</div>
 {{/if}}
