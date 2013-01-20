@@ -11,12 +11,13 @@ body{
 	font-size:100%;
 	background-color:#f5f5f5 !important;
 }
-.post-init, .post-section, .post-loading, .posting, .facebook-login, .posting-container,.post-sec, .video-container,
+.post-init, .post-section, .post-loading, .posting, .facebook-login, .posting-container,.post-sec,
 .video-container table{
 	height:100%;
 }
 .video-container{
 	width: 50%;
+	height:90%;
 	margin:auto;
 }
 .title-list{
@@ -116,4 +117,11 @@ body{
 }
 .video-container{
 	text-align: center;
+}
+.full-width{
+	width:90%;
+}
+.vid-buttons{
+	position: absolute;
+
 }
